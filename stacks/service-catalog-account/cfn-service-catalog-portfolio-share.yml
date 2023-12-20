@@ -15,6 +15,20 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       RoleName: cfn-service-catalog-portfolio-share-execution-role
+      Policies:
+        - PolicyName: cfn-service-catalog-portfolio-share-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - servicecatalog:CreatePortfolioShare
+                  - servicecatalog:DeletePortfolioShare
+                  - servicecatalog:UpdatePortfolioShare
+                Resource:
+                  - "*"
+                Condition:
+                  StringNotEquals:
+                    aws:ResourceOrgID: o-hru7a3vwm2
   Function:
     Type: AWS::Serverless::Function
     Properties:
