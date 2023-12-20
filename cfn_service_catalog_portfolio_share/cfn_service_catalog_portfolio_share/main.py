@@ -4,7 +4,7 @@ import boto3
 
 logger = Logger()
 cfn_helper = CfnResource()
-service_catalog = boto3.client("service_catalog")
+service_catalog = boto3.client("servicecatalog")
 
 @cfn_helper.create
 def create(event, _context):
