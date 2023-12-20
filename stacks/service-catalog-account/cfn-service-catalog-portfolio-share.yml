@@ -44,4 +44,4 @@ Resources:
         Variables:
           POWERTOOLS_SERVICE_NAME: cfn-service-catalog-portfolio-share
           POWERTOOLS_TRACER_CAPTURE_ERROR: false
-          LOG_LEVEL: INF
+          LOG_LEVEL: INFO
