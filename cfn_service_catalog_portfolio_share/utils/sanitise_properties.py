@@ -1,4 +1,10 @@
+from aws_lambda_powertools import Logger
+
+logger = Logger()
+
 def sanitise_properties(properties):
+    logger.info(f"sanitising: {properties}")
+
     accept_language = properties.get("AcceptLanguage")
     portfolio_id = properties.get("PortfolioId")
     account_id = properties.get("AccountId")
