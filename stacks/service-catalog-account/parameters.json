@@ -1,0 +1,7 @@
+{
+  "Parameters": {},
+  "Tags": {
+    "Project": "cfn-service-catalog-portfolio-share",
+    "Environment": "test"
+  }
+}

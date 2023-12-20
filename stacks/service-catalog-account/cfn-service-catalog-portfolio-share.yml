@@ -1,0 +1,33 @@
+Transform: AWS::Serverless-2016-10-31
+Description: Infrastructure for cfn-service-catalog-portfolio-share
+Resources:
+  FunctionExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName: cfn-service-catalog-portfolio-share-execution-role
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: cfn_service_catalog_portfolio_share.main.handler
+      Runtime: python3.11
+      CodeUri: ../../build
+      Role: !GetAtt FunctionExecutionRole.Arn
+      FunctionName: cfn-service-catalog-portfolio-share
+      MemorySize: 256
+      Timeout: 120
+      Tracing: Active
+      Environment:
+        Variables:
+          POWERTOOLS_SERVICE_NAME: cfn-service-catalog-portfolio-share
+          POWERTOOLS_TRACER_CAPTURE_ERROR: false
+          LOG_LEVEL: INF
