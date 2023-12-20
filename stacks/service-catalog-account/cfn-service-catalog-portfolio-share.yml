@@ -26,9 +26,6 @@ Resources:
                   - servicecatalog:UpdatePortfolioShare
                 Resource:
                   - "*"
-                Condition:
-                  StringNotEquals:
-                    aws:ResourceOrgID: o-hru7a3vwm2
   Function:
     Type: AWS::Serverless::Function
     Properties:
