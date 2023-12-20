@@ -29,6 +29,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - organizations:ListDelegatedAdministrators
+                  - organizations:ListAccounts
                 Resource:
                   - "*"
   Function:
