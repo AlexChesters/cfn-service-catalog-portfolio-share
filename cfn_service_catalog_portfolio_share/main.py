@@ -26,9 +26,13 @@ def update(event, _context):
 def delete(event, _context):
     logger.info("delete")
 
-    sanitised_properties = sanitise_properties(event["ResourceProperties"])
+    portfolio_id = event["ResourceProperties"].get("PortfolioId")
+
+    if not portfolio_id:
+        raise ValueError("Property PortfolioId not provided")
+
     service_catalog.delete_portfolio_share(
-        PortfolioId=sanitised_properties["PortfolioId"]
+        PortfolioId=portfolio_id
     )
 
 @logger.inject_lambda_context(log_event=True)
