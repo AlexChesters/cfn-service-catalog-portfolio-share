@@ -26,8 +26,8 @@ def sanitise_properties(properties):
 
     return_dict = {
         "PortfolioId": portfolio_id,
-        "ShareTagOptions": share_tag_options,
-        "SharePrincipals": share_principals
+        "ShareTagOptions": share_tag_options == 'True',
+        "SharePrincipals": share_principals == 'True'
     }
 
     if accept_language:
@@ -41,8 +41,8 @@ def sanitise_properties(properties):
             raise ValueError("Property OrganizationNode is invalid (must contain a Type and Value)")
 
         return_dict["OrganizationNode"] = {
-            "Type": organisation_node_type == 'True',
-            "Value": organisation_node_value == 'True'
+            "Type": organisation_node_type,
+            "Value": organisation_node_value
         }
 
     return return_dict
