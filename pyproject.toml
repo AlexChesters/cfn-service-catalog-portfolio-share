@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "cfn-service-catalog-portfolio-share"
+version = "0.0.0"
+description = "CloudFormation custom resource for Service Catalog Portfolio Shares that supports Organisation sharing"
+authors = ["Alex Chesters <alex@cheste.rs>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aws-lambda-powertools = "^2.30.2"
+crhelper = "^2.0.11"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.0.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
