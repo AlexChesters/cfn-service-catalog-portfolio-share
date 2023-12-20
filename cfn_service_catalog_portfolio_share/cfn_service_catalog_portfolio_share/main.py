@@ -6,8 +6,12 @@ logger = Logger()
 cfn_helper = CfnResource()
 
 @cfn_helper.create
-def create(_event, _context):
+def create(event, _context):
     logger.info("create")
+    portfolio_id = event["ResourceProperties"].get("PortfolioId")
+
+    if not portfolio_id:
+        raise ValueError("Property PortfolioId not provided")
 
 @cfn_helper.update
 def update(_event, _context):
