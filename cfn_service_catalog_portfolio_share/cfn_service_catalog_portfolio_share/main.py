@@ -1,8 +1,7 @@
-from aws_lambda_powertools import Logger, Tracer
+from aws_lambda_powertools import Logger
 from crhelper import CfnResource
 
 logger = Logger()
-tracer = Tracer()
 
 cfn_helper = CfnResource()
 
@@ -18,7 +17,6 @@ def update(_event, _context):
 def delete(_event, _context):
     logger.info("delete")
 
-@tracer.capture_lambda_handler
 @logger.inject_lambda_context(log_event=True)
 def handler(event, context):
     cfn_helper(event, context)
