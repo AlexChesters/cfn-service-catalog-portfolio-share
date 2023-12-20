@@ -26,8 +26,8 @@ def sanitise_properties(properties):
 
     return_dict = {
         "PortfolioId": portfolio_id,
-        "ShareTagOptions": share_tag_options == 'True',
-        "SharePrincipals": share_principals == 'True'
+        "ShareTagOptions": share_tag_options.lower() == 'true',
+        "SharePrincipals": share_principals.lower() == 'true'
     }
 
     if accept_language:
