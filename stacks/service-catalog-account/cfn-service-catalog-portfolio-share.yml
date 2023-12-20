@@ -32,7 +32,7 @@ Resources:
   Function:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: cfn_service_catalog_portfolio_share.cfn_service_catalog_portfolio_share.main.handler
+      Handler: cfn_service_catalog_portfolio_share.main.handler
       Runtime: python3.11
       CodeUri: ../../build
       Role: !GetAtt FunctionExecutionRole.Arn

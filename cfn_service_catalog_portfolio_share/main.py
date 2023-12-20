@@ -2,7 +2,7 @@ from aws_lambda_powertools import Logger
 from crhelper import CfnResource
 import boto3
 
-from utils.sanitise_properties import sanitise_properties
+from cfn_service_catalog_portfolio_share.utils.sanitise_properties import sanitise_properties
 
 logger = Logger()
 cfn_helper = CfnResource()
