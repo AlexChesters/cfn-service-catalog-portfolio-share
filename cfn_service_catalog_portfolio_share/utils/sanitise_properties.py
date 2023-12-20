@@ -31,7 +31,7 @@ def sanitise_properties(properties):
         organisation_node_type = organisation_node.get("Type")
         organisation_node_value = organisation_node.get("Value")
 
-        if not organisation_node_type or organisation_node_value:
+        if not organisation_node_type and not organisation_node_value:
             raise ValueError("Property OrganizationNode is invalid (must contain a Type and Value)")
 
         return_dict["OrganizationNode"] = {
