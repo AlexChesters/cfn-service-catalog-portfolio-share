@@ -23,8 +23,13 @@ def update(event, _context):
         raise ValueError("Property PortfolioId not provided")
 
 @cfn_helper.delete
-def delete(_event, _context):
+def delete(event, _context):
     logger.info("delete")
+
+    portfolio_id = event["ResourceProperties"].get("PortfolioId")
+
+    if not portfolio_id:
+        raise ValueError("Property PortfolioId not provided")
 
 @logger.inject_lambda_context(log_event=True)
 def handler(event, context):
