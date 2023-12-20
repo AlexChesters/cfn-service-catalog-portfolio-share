@@ -45,4 +45,6 @@ def sanitise_properties(properties):
             "Value": organisation_node_value
         }
 
+    logger.info(f"sanitised: {return_dict}")
+
     return return_dict
