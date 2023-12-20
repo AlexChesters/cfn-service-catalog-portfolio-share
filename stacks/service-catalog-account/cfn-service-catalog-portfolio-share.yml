@@ -26,6 +26,11 @@ Resources:
                   - servicecatalog:UpdatePortfolioShare
                 Resource:
                   - "*"
+              - Effect: Allow
+                Action:
+                  - organizations:ListDelegatedAdministrators
+                Resource:
+                  - "*"
   Function:
     Type: AWS::Serverless::Function
     Properties:
