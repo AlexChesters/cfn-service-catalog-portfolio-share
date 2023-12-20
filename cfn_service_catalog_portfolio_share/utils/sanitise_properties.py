@@ -9,8 +9,8 @@ def sanitise_properties(properties):
     portfolio_id = properties.get("PortfolioId")
     account_id = properties.get("AccountId")
     organisation_node = properties.get("OrganizationNode")
-    share_tag_options = properties.get("ShareTagOptions", False)
-    share_principals = properties.get("SharePrincipals", False)
+    share_tag_options = properties.get("ShareTagOptions", "False")
+    share_principals = properties.get("SharePrincipals", "False")
 
     if accept_language and accept_language not in ["jp", "zh"]:
         raise ValueError(f"AcceptLanguage property {accept_language} not valid. Valid options: jp, zh")
