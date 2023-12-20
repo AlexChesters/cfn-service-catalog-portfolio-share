@@ -14,8 +14,13 @@ def create(event, _context):
         raise ValueError("Property PortfolioId not provided")
 
 @cfn_helper.update
-def update(_event, _context):
+def update(event, _context):
     logger.info("update")
+
+    portfolio_id = event["ResourceProperties"].get("PortfolioId")
+
+    if not portfolio_id:
+        raise ValueError("Property PortfolioId not provided")
 
 @cfn_helper.delete
 def delete(_event, _context):
