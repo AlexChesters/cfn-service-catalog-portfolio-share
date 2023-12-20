@@ -41,8 +41,8 @@ def sanitise_properties(properties):
             raise ValueError("Property OrganizationNode is invalid (must contain a Type and Value)")
 
         return_dict["OrganizationNode"] = {
-            "Type": organisation_node_type,
-            "Value": organisation_node_value
+            "Type": organisation_node_type == 'True',
+            "Value": organisation_node_value == 'True'
         }
 
     return return_dict
