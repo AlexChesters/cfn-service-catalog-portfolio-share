@@ -26,14 +26,13 @@ def update(event, _context):
 def delete(event, _context):
     logger.info("delete")
 
-    portfolio_id = event["ResourceProperties"].get("PortfolioId")
+    sanitised_properties = sanitise_properties(event["ResourceProperties"])
 
-    if not portfolio_id:
-        raise ValueError("Property PortfolioId not provided")
+    # ShareTagOptions and SharePrincipals are not used in delete_portfolio_share
+    del sanitised_properties["ShareTagOptions"]
+    del sanitised_properties["SharePrincipals"]
 
-    service_catalog.delete_portfolio_share(
-        PortfolioId=portfolio_id
-    )
+    service_catalog.delete_portfolio_share(**sanitised_properties)
 
 @logger.inject_lambda_context(log_event=True)
 def handler(event, context):
