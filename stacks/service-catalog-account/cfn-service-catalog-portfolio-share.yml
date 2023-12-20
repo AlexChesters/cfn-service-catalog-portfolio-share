@@ -38,7 +38,7 @@ Resources:
       Role: !GetAtt FunctionExecutionRole.Arn
       FunctionName: cfn-service-catalog-portfolio-share
       MemorySize: 256
-      Timeout: 120
+      Timeout: 30
       Tracing: Active
       Environment:
         Variables:
