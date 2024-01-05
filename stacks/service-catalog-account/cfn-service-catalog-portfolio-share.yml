@@ -14,7 +14,7 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-      RoleName: cfn-service-catalog-portfolio-share-execution-role
+      RoleName: !Sub "cfn-service-catalog-portfolio-share-execution-role-${AWS::Region}"
       Policies:
         - PolicyName: cfn-service-catalog-portfolio-share-policy
           PolicyDocument:
