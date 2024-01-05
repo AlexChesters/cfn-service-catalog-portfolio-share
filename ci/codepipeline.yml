@@ -1,3 +1,6 @@
+# TODO: update this template to not reference any service catalog resources (e.g. ci-infrastructure-artifacts-bucket-name)
+# as this is a service catalog resource, this creates a circular dependency
+# instead this file should define its own roles, buckets etc
 Description: pipeline to deploy cfn-service-catalog-portfolio-share
 Resources:
   CodeBuildRole:
