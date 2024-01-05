@@ -1,8 +1,92 @@
-# TODO: update this template to not reference any service catalog resources (e.g. ci-infrastructure-artifacts-bucket-name)
-# as this is a service catalog resource, this creates a circular dependency
-# instead this file should define its own roles, buckets etc
 Description: pipeline to deploy cfn-service-catalog-portfolio-share
 Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cfn-service-catalog-portfolio-share-ci-artifacts-${AWS::Region}"
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 365
+            Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  CodeStarConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: service-catalog-portfolio-share
+      ProviderType: GitHub
+  CodeBuildBasePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: CloudFormation
+            Effect: Allow
+            Action:
+              - cloudformation:ValidateTemplate
+            Resource:
+              - "*"
+          - Sid: CloudWatchLogs
+            Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - "*"
+          - Sid: IAM
+            Effect: Allow
+            Action:
+              - sts:AssumeRole
+              - iam:GetUser
+              - iam:GetInstanceProfile
+              - iam:PassRole
+            Resource:
+              - "*"
+          - Sid: SSM
+            Effect: Allow
+            Action:
+              - ssm:GetParameters
+            Resource:
+              - "*"
+          - Sid: KMS
+            Effect: Allow
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource:
+              - "*"
+          - Sid: S3
+            Effect: Allow
+            Action:
+              - s3:Get*
+              - s3:List*
+              - s3:PutObject
+              - s3:PutObjectAcl
+              - s3:DeleteObject
+            Resource:
+              - "*"
+          - Sid: CodeBuild
+            Effect: Allow
+            Action:
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:StartBuild
+            Resource:
+              - "*"
+          - Sid: CodeStarConnections
+            Effect: Allow
+            Action:
+              - codestar-connections:UseConnection
+            Resource:
+              - !GetAtt CodeStarConnection.ConnectionArn
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
@@ -13,13 +97,13 @@ Resources:
             Principal:
               Service: codebuild.amazonaws.com
       ManagedPolicyArns:
-        - !ImportValue ci-infrastructure-codebuild-base-iam-policy
+        - !Ref CodeBuildBasePolicy
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
       Artifacts:
         Type: CODEPIPELINE
-        Location: !ImportValue ci-infrastructure-artifacts-bucket-name
+        Location: !Ref Bucket
         Path: /artifacts/cfn-service-catalog-portfolio-share/
         Packaging: NONE
         Name: build
@@ -31,7 +115,7 @@ Resources:
         Image: aws/codebuild/amazonlinux2-aarch64-standard:3.0
         Type: ARM_CONTAINER
         EnvironmentVariables:
-          - Value: !ImportValue ci-infrastructure-artifacts-bucket-name
+          - Value: !Ref Bucket
             Name: ARTIFACTS_BUCKET
             Type: PLAINTEXT
       Name: cfn-service-catalog-portfolio-share
@@ -39,15 +123,96 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec.yml
+  CodePipelineBaseExecutionPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: CloudFormation
+            Effect: Allow
+            Action:
+              - cloudformation:*
+            Resource:
+              - "*"
+          - Sid: IAM
+            Effect: Allow
+            Action:
+              - iam:GetRole
+              - iam:PassRole
+            Resource:
+              - "*"
+          - Sid: CodeBuild
+            Effect: Allow
+            Action:
+              - codebuild:StartBuild
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuildBatch
+              - codebuild:BatchGetBuildBatches
+            Resource:
+              - "*"
+          - Sid: KMS
+            Effect: Allow
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource:
+              - "*"
+          - Sid: S3
+            Effect: Allow
+            Action:
+              - s3:Get*
+              - s3:List*
+              - s3:PutObject
+              - s3:PutObjectAcl
+              - s3:DeleteObject
+            Resource:
+              - "*"
+          - Sid: CodeStarConnections
+            Effect: Allow
+            Action:
+              - codestar-connections:UseConnection
+            Resource:
+              - !GetAtt CodeStarConnection.ConnectionArn
+  CodePipelineBaseExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+      ManagedPolicyArns:
+        - !Ref CodePipelineBaseExecutionPolicy
+  CodePipelineCloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+      Policies:
+        - PolicyName: codepipeline-cloudformation-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "*"
+                Resource:
+                  - "*"
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       ArtifactStore:
         Type: S3
-        Location: !ImportValue ci-infrastructure-artifacts-bucket-name
+        Location: !Ref Bucket
       Name: cfn-service-catalog-portfolio-share
       RestartExecutionOnUpdate: true
-      RoleArn: !ImportValue ci-infrastructure-codepipeline-base-execution-iam-role
+      RoleArn: !GetAtt CodePipelineBaseExecutionRole.Arn
       Stages:
         - Name: Source
           Actions:
@@ -62,7 +227,7 @@ Resources:
               Name: Clone-From-GitHub
               Namespace: SourceVariables
               Configuration:
-                ConnectionArn: !ImportValue ci-infrastructure-github-codestar-connection
+                ConnectionArn: !Ref CodeStarConnection
                 FullRepositoryId: AlexChesters/cfn-service-catalog-portfolio-share
                 BranchName: main
                 OutputArtifactFormat: CODE_ZIP
@@ -96,6 +261,6 @@ Resources:
                 ActionMode: REPLACE_ON_FAILURE
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 StackName: cfn-service-catalog-portfolio-share
-                RoleArn: !ImportValue ci-infrastructure-codepipeline-base-cloudformation-iam-role
+                RoleArn: !GetAtt CodePipelineCloudFormationRole.Arn
                 TemplatePath: BuiltSource::stacks/service-catalog-account/cfn-service-catalog-portfolio-share.yml
                 TemplateConfiguration: BuiltSource::stacks/service-catalog-account/parameters.json
