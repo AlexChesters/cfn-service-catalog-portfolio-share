@@ -213,6 +213,7 @@ Resources:
       Name: cfn-service-catalog-portfolio-share
       RestartExecutionOnUpdate: true
       RoleArn: !GetAtt CodePipelineBaseExecutionRole.Arn
+      PipelineType: V2
       Stages:
         - Name: Source
           Actions:
