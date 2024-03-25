@@ -16,7 +16,8 @@ test: install
 			export AWS_SESSION_TOKEN='testing' && \
 			export AWS_SECURITY_TOKEN='testing' && \
 			export PATH="${HOME}/.poetry/bin:${PATH}" && \
-			poetry run pylint cfn_service_catalog_portfolio_share \
+			poetry run pytest tests && \
+			poetry run pylint cfn_service_catalog_portfolio_share tests \
 	)
 
 package: clean install test
